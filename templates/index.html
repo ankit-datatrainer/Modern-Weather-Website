@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Atmos — High-precision meteorological intelligence and real-time weather analytics.">
+  <title>Atmos · Meteorological Intelligence</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z'/%3E%3C/svg%3E">
+</head>
+<body data-condition="clear-day">
+
+  <!-- ============ Atmospheric Dynamic Lighting Canvas & Backdrop ============ -->
+  <div class="sky-ambient" aria-hidden="true">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+    <div class="sky-overlay"></div>
+  </div>
+
+  <!-- ============ Global SVG Icon System ============ -->
+  <svg width="0" height="0" style="position:absolute; display:none;" aria-hidden="true">
+    <defs>
+      <!-- Interface Icons -->
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-key" viewBox="0 0 24 24"><path d="m21 2-2 2m-1.5 1.5L14 9l-2-2-4 4-2-2-4 4 6 6 4-4-2-2 3.5-3.5"/></symbol>
+      <symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol>
+      <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol>
+      <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol>
+      <symbol id="i-cloudy" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+      <symbol id="i-sunrise" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></symbol>
+      <symbol id="i-sunset" viewBox="0 0 24 24"><path d="M12 10V2"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m16 6-4 4-4-4"/><path d="M16 18a4 4 0 0 0-8 0"/></symbol>
+      <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/><path d="M19 3v4M21 5h-4M5 19v2M6 20H4"/></symbol>
+
+      <!-- Weather Condition Glyphs -->
+      <symbol id="w-clear-day" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+      <symbol id="w-clear-night" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+      <symbol id="w-partly-day" viewBox="0 0 24 24"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.95 12.65a4 4 0 0 0-5.93-4.13"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></symbol>
+      <symbol id="w-partly-night" viewBox="0 0 24 24"><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/><path d="M10.08 9A6 6 0 0 1 16 3a6.6 6.6 0 0 0 4 6 6 6 0 0 1-3 5.2"/></symbol>
+      <symbol id="w-cloud" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></symbol>
+      <symbol id="w-overcast" viewBox="0 0 24 24"><path d="M17.5 21H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M22 10a3 3 0 0 0-3-3h-2.21a5.5 5.5 0 0 0-10.7.5"/></symbol>
+      <symbol id="w-drizzle" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24"/><path d="M8 19v1M8 14v1M16 19v1M16 14v1M12 21v1M12 16v1"/></symbol>
+      <symbol id="w-rain" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24"/><path d="M16 14v6M8 14v6M12 16v6"/></symbol>
+      <symbol id="w-thunder" viewBox="0 0 24 24"><path d="M6 16.3A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.97"/><polygon points="13 11 9 17 14 17 11 22 17 14 13 14 15 11"/></symbol>
+      <symbol id="w-snow" viewBox="0 0 24 24"><path d="M4 14.9A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.24"/><path d="M8 15h.01M8 19h.01M12 17h.01M12 21h.01M16 15h.01M16 19h.01"/></symbol>
+      <symbol id="w-mist" viewBox="0 0 24 24"><path d="M3 10h18M3 14h18M5 18h14M7 6h10"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="app-layout">
+
+    <!-- ============ Header Bar ============ -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg class="icon"><use href="#w-clear-day"/></svg>
+        </div>
+        <div class="brand-title">
+          <span class="logo-name">ATMOS</span>
+          <span class="logo-badge">METEOROLOGY</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Live status indicator pill -->
+        <div class="status-pill" title="Live Meteorological Radar Station">
+          <span class="status-dot"></span>
+          <span id="status-text">Live Radar</span>
+        </div>
+
+        <!-- Temperature Unit Toggle -->
+        <div class="unit-toggle" role="group" aria-label="Units">
+          <button type="button" data-unit="metric" class="unit-btn active" id="unit-c">°C</button>
+          <button type="button" data-unit="imperial" class="unit-btn" id="unit-f">°F</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ Search & Navigation Hub ============ -->
+    <section class="search-hub">
+      <div class="search-lead">
+        <h1>Atmospheric Intelligence</h1>
+        <p>Real-time telemetry, 24-hour micro-trends, and multi-day predictive forecasts.</p>
+      </div>
+
+      <form id="search-form" class="search-control" autocomplete="off">
+        <div class="search-input-wrapper">
+          <svg class="icon search-icon"><use href="#i-search"/></svg>
+          <input id="search-input" type="text" name="city" spellcheck="false"
+                 placeholder="Search city or coordinates (e.g. Tokyo, London, Paris, New York)..."
+                 aria-label="City name">
+          <button type="button" id="clear-input-btn" class="clear-btn" aria-label="Clear search input" hidden>
+            <svg class="icon"><use href="#i-close"/></svg>
+          </button>
+        </div>
+        
+        <div class="search-actions">
+          <button type="button" id="geo-btn" class="btn-geo" title="Detect your local station" aria-label="Detect current location">
+            <svg class="icon"><use href="#i-pin"/></svg>
+            <span>My Location</span>
+          </button>
+          <button type="submit" id="search-submit-btn" class="btn-submit">
+            <span>Forecast</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Recent & Popular Search Pills -->
+      <div class="city-chips-container">
+        <div class="chips-group" id="recent-cities-group" hidden>
+          <span class="chips-label">Recent:</span>
+          <div class="chips-rail" id="recent-cities-rail"></div>
+        </div>
+        <div class="chips-group">
+          <span class="chips-label">Popular:</span>
+          <div class="chips-rail" id="popular-cities-rail">
+            <button type="button" class="chip" data-city="Tokyo">Tokyo</button>
+            <button type="button" class="chip" data-city="London">London</button>
+            <button type="button" class="chip" data-city="New York">New York</button>
+            <button type="button" class="chip" data-city="Paris">Paris</button>
+            <button type="button" data-city="Dubai" class="chip">Dubai</button>
+            <button type="button" class="chip" data-city="Mumbai">Mumbai</button>
+            <button type="button" class="chip" data-city="New Delhi">New Delhi</button>
+            <button type="button" class="chip" data-city="Sydney">Sydney</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Notification Banner / Alert ============ -->
+    <div id="notice-banner" class="notice-banner" hidden>
+      <div class="notice-content">
+        <span class="notice-badge">INFO</span>
+        <span id="notice-message">Notification message here</span>
+      </div>
+      <button type="button" id="notice-dismiss" class="notice-close" aria-label="Dismiss notice">
+        <svg class="icon"><use href="#i-close"/></svg>
+      </button>
+    </div>
+
+    <!-- ============ Loading / Skeleton State ============ -->
+    <div id="loading-state" class="loading-state" hidden>
+      <div class="spinner-ring"></div>
+      <p class="loading-label" id="loading-label">Synchronizing Live Meteorological Radar...</p>
+    </div>
+
+    <!-- ============ Error State ============ -->
+    <div id="error-state" class="state-card error-card" hidden>
+      <div class="state-icon error-icon-pulse">
+        <svg class="icon"><use href="#w-thunder"/></svg>
+      </div>
+      <h3 id="error-title">Location Lookup Failed</h3>
+      <p id="error-detail">We could not retrieve weather records for the requested location.</p>
+      <div class="state-actions">
+        <button type="button" class="btn-retry" id="btn-retry">Try Again</button>
+        <button type="button" class="btn-secondary" id="btn-demo-fallback">Load Demo Telemetry</button>
+      </div>
+    </div>
+
+    <!-- ============ Weather Intelligence Dashboard ============ -->
+    <main id="weather-dashboard" class="weather-dashboard" hidden>
+
+      <!-- Primary Overview Grid: Hero Conditions + Key Matrix -->
+      <div class="hero-layout">
+        
+        <!-- Main Weather Hero Card with Live Interactive Weather FX -->
+        <article class="card hero-card" id="hero-card">
+          <div class="hero-top">
+            <div class="location-group">
+              <div class="location-badge">
+                <svg class="icon"><use href="#i-pin"/></svg>
+                <span id="loc-country">GB</span>
+                <span class="telemetry-tag" id="telemetry-tag">LIVE OBSERVATION</span>
+              </div>
+              <h2 class="city-name" id="loc-name">London</h2>
+              <div class="meta-row">
+                <span class="local-time" id="local-time">
+                  <svg class="icon"><use href="#i-clock"/></svg>
+                  <span id="time-text">Monday, 14:32</span>
+                </span>
+                <span class="divider">·</span>
+                <span class="coordinates" id="loc-coords">51.5074° N, 0.1278° W</span>
+              </div>
+            </div>
+
+            <div class="condition-badge" id="condition-pill">
+              <span id="condition-text">Scattered Clouds</span>
+            </div>
+          </div>
+
+          <div class="hero-body">
+            <div class="temperature-cluster">
+              <div class="temperature-display">
+                <span class="temp-num" id="temp-val">18</span>
+                <span class="temp-symbol" id="temp-unit">°C</span>
+              </div>
+              <div class="temp-insights">
+                <p class="feels-label" id="feels-val">Feels like 17.5°</p>
+                <div class="hilo-badge">
+                  <span class="hi">H: <strong id="hi-val">20°</strong></span>
+                  <span class="lo">L: <strong id="lo-val">12°</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Enhanced Interactive Weather FX Stage -->
+            <div class="weather-visual" id="weather-visual-stage">
+              <div class="visual-glow" id="visual-glow"></div>
+              <!-- 60FPS Ambient Weather Simulation Canvas -->
+              <canvas id="weather-anim-canvas" class="weather-anim-canvas" width="220" height="220" aria-label="Dynamic weather animation"></canvas>
+              <!-- Primary Glyph Symbol -->
+              <svg class="icon hero-icon" id="hero-condition-icon"><use href="#w-partly-day"/></svg>
+              <!-- Interactive FX Badge -->
+              <button type="button" id="anim-toggle-btn" class="anim-toggle-badge" title="Live Atmospheric FX Active">
+                <span class="anim-dot"></span>
+                <span id="anim-toggle-text">LIVE FX</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-footer">
+            <div class="weather-summary-text" id="weather-summary-text">
+              Gentle breeze with pleasant conditions. Expect clear skies through the evening.
+            </div>
+            <div class="refresh-indicator">
+              <button type="button" id="refresh-btn" class="btn-refresh" title="Refresh current observation">
+                <svg class="icon"><use href="#i-refresh"/></svg>
+                <span id="last-updated">Updated just now</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Right Side: Mini Highlights Matrix -->
+        <div class="quick-telemetry-grid">
+
+          <!-- Wind Instrument Card -->
+          <article class="card metric-card wind-metric">
+            <div class="metric-header">
+              <div class="metric-title">
+                <svg class="icon"><use href="#i-wind"/></svg>
+                <span>WIND & GUSTS</span>
+              </div>
+              <span class="metric-sub" id="wind-cardinal">SSE · 158°</span>
+            </div>
+            <div class="wind-body">
+              <div class="compass-dial" id="compass-dial">
+                <div class="compass-ring">
+                  <span class="c-point n">N</span>
+                  <span class="c-point e">E</span>
+                  <span class="c-point s">S</span>
+                  <span class="c-point w">W</span>
+                </div>
+                <div class="compass-needle" id="compass-needle">
+                  <div class="needle-arrow"></div>
+                </div>
+              </div>
+              <div class="wind-readout">
+                <div class="readout-primary">
+                  <span class="val" id="wind-speed-val">14.2</span>
+                  <span class="unit" id="wind-unit">km/h</span>
+                </div>
+                <div class="readout-secondary" id="wind-gust-row">
+                  <span>Gusts up to:</span>
+                  <strong id="wind-gust-val">21 km/h</strong>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Sun Schedule Arc Card -->
+          <article class="card metric-card sun-metric">
+            <div class="metric-header">
+              <div class="metric-title">
+                <svg class="icon"><use href="#i-sunrise"/></svg>
+                <span>SOLAR TRAJECTORY</span>
+              </div>
+              <span class="metric-sub" id="daylight-remaining">6h 12m daylight left</span>
+            </div>
+            <div class="sun-body">
+              <div class="solar-arc-wrapper">
+                <svg class="solar-arc-svg" viewBox="0 0 200 100" preserveAspectRatio="none">
+                  <!-- Ground line -->
+                  <line x1="10" y1="90" x2="190" y2="90" class="arc-ground" />
+                  <!-- Arc Path -->
+                  <path d="M 20 90 A 80 70 0 0 1 180 90" class="arc-track" />
+                  <path d="M 20 90 A 80 70 0 0 1 180 90" class="arc-progress" id="arc-progress-path" />
+                  <!-- Sun marker circle -->
+                  <circle cx="100" cy="20" r="6" class="sun-marker" id="sun-marker-dot" />
+                </svg>
+              </div>
+              <div class="sun-times-row">
+                <div class="sun-time-block">
+                  <span class="time-label">Sunrise</span>
+                  <span class="time-val" id="sunrise-val">06:14 AM</span>
+                </div>
+                <div class="sun-time-block right">
+                  <span class="time-label">Sunset</span>
+                  <span class="time-val" id="sunset-val">07:48 PM</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <!-- ============ 24-Hour Forecast Timeline Strip ============ -->
+      <section class="card timeline-card">
+        <div class="timeline-header">
+          <div class="section-title-wrap">
+            <svg class="icon"><use href="#i-clock"/></svg>
+            <h3>24-Hour Atmospheric Timeline</h3>
+          </div>
+          <div class="timeline-legend">
+            <span class="legend-item"><span class="dot rain-dot"></span> Chance of Rain</span>
+          </div>
+        </div>
+
+        <div class="hourly-rail" id="hourly-rail">
+          <!-- Dynamic hourly cards injected here -->
+        </div>
+      </section>
+
+      <!-- ============ Multi-Day Precision Outlook & Secondary Telemetry ============ -->
+      <div class="outlook-grid">
+
+        <!-- Multi-Day Forecast Card with Range Selector (5 Days / 7 Days / 10 Days) -->
+        <section class="card forecast-card">
+          <div class="forecast-header-row">
+            <div class="section-title-wrap">
+              <svg class="icon"><use href="#w-clear-day"/></svg>
+              <h3 id="forecast-heading">Multi-Day Outlook</h3>
+            </div>
+            
+            <!-- Range Selector Tabs: 5 Days | 7 Days (Week) | 10 Days -->
+            <div class="forecast-range-selector" role="tablist" aria-label="Forecast Duration">
+              <button type="button" class="range-tab" data-days="5">5 Days</button>
+              <button type="button" class="range-tab active" data-days="7">7 Days (Week)</button>
+              <button type="button" class="range-tab" data-days="10">10 Days</button>
+            </div>
+          </div>
+
+          <div class="daily-list" id="daily-list">
+            <!-- Dynamic multi-day items injected here -->
+          </div>
+        </section>
+
+        <!-- Comprehensive Atmospheric Metrics Matrix -->
+        <section class="matrix-column">
+          <div class="matrix-grid">
+
+            <!-- Humidity & Dew Point -->
+            <article class="card mini-card">
+              <div class="mini-header">
+                <svg class="icon"><use href="#i-drop"/></svg>
+                <span>HUMIDITY</span>
+              </div>
+              <div class="mini-stat">
+                <span class="stat-number" id="humidity-val">62%</span>
+                <span class="stat-tag" id="humidity-tag">Normal</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="humidity-bar" style="width: 62%;"></div>
+              </div>
+              <div class="mini-footnote" id="dew-point-val">The dew point is 11° right now.</div>
+            </article>
+
+            <!-- Barometric Pressure -->
+            <article class="card mini-card">
+              <div class="mini-header">
+                <svg class="icon"><use href="#i-gauge"/></svg>
+                <span>BAROMETER</span>
+              </div>
+              <div class="mini-stat">
+                <span class="stat-number" id="pressure-val">1018</span>
+                <span class="stat-unit">hPa</span>
+              </div>
+              <div class="pressure-gauge-track">
+                <div class="pressure-needle" id="pressure-needle"></div>
+              </div>
+              <div class="mini-footnote" id="pressure-tag">Optimal atmospheric stability.</div>
+            </article>
+
+            <!-- Visibility -->
+            <article class="card mini-card">
+              <div class="mini-header">
+                <svg class="icon"><use href="#i-eye"/></svg>
+                <span>VISIBILITY</span>
+              </div>
+              <div class="mini-stat">
+                <span class="stat-number" id="visibility-val">10</span>
+                <span class="stat-unit" id="visibility-unit">km</span>
+              </div>
+              <div class="mini-footnote" id="visibility-tag">Crystal clear atmosphere.</div>
+            </article>
+
+            <!-- Cloud Coverage -->
+            <article class="card mini-card">
+              <div class="mini-header">
+                <svg class="icon"><use href="#i-cloudy"/></svg>
+                <span>CLOUD DENSITY</span>
+              </div>
+              <div class="mini-stat">
+                <span class="stat-number" id="clouds-val">35%</span>
+                <span class="stat-unit">coverage</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill cloud-fill" id="clouds-bar" style="width: 35%;"></div>
+              </div>
+              <div class="mini-footnote" id="clouds-tag">Scattered fair weather clouds.</div>
+            </article>
+
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- ============ In-App Location Permission Modal ============ -->
+    <div id="location-modal" class="modal-overlay" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="loc-modal-title">
+        <button type="button" id="loc-modal-close-icon" class="modal-close-btn" aria-label="Close dialog">
+          <svg class="icon"><use href="#i-close"/></svg>
+        </button>
+
+        <div class="modal-beacon">
+          <div class="radar-ping"></div>
+          <div class="radar-core">
+            <svg class="icon"><use href="#i-pin"/></svg>
+          </div>
+        </div>
+
+        <div class="modal-header">
+          <h3 id="loc-modal-title">Enable Station Telemetry</h3>
+          <p id="loc-modal-desc">
+            Allow Atmos to detect your local meteorological station to stream real-time radar telemetry, accurate local temperatures, and predictive forecasts.
+          </p>
+        </div>
+
+        <div class="modal-benefits">
+          <div class="benefit-item">
+            <span class="benefit-bullet">📡</span>
+            <div class="benefit-info">
+              <strong>Hyper-Local Weather Data</strong>
+              <span>Live ground station observation for your exact city</span>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span class="benefit-bullet">🛡️</span>
+            <div class="benefit-info">
+              <strong>In-App Permission Privacy</strong>
+              <span>Coordinates remain local to your browser and are never stored or shared</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="loc-modal-gps-btn" class="btn-modal-primary">
+            <svg class="icon"><use href="#i-pin"/></svg>
+            <span>Grant Location Permission</span>
+          </button>
+          <button type="button" id="loc-modal-ip-btn" class="btn-modal-secondary">
+            <svg class="icon"><use href="#i-refresh"/></svg>
+            <span>Auto-Detect via Network (IP)</span>
+          </button>
+          <button type="button" id="loc-modal-cancel-btn" class="btn-modal-ghost">
+            <span>Cancel / Search Manually</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Floating Toast Notification ============ -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ============ App Footer ============ -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Atmos Meteorology Platform</span>
+        <span class="footer-sep">·</span>
+        <span>Global Satellite & Radar Network</span>
+      </div>
+      <div class="footer-right">
+        <span id="footer-station-info">Station Telemetry Active</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

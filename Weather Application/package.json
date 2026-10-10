@@ -1,0 +1,9 @@
+{
+  "name": "atmos-weather",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Atmos — a professional weather application (Flask + vanilla JS, OpenWeather data).",
+  "scripts": {
+    "dev": "python app.py"
+  }
+}
