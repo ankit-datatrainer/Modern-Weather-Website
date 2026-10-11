@@ -423,8 +423,18 @@ def generate_demo_weather(city_name, units="metric", lat=None, lon=None, days=7)
 
 # --------------------------------------------------------------------------- Routes
 
-@app.get("/")
+@app.route("/")
+@app.route("/index")
+@app.route("/index.html")
+@app.route("/api/index")
+@app.route("/api/index.py")
 def index():
+    return render_template("index.html")
+
+@app.errorhandler(404)
+def not_found(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "Endpoint not found", "path": request.path}), 404
     return render_template("index.html")
 
 @app.get("/api/health")

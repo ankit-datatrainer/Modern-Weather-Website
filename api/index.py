@@ -12,6 +12,3 @@ if ROOT_DIR not in sys.path:
 
 from app import app
 
-# For local testing if invoked directly
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000)
