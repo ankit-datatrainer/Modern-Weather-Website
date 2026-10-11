@@ -674,19 +674,41 @@ def api_weather():
 
 # --------------------------------------------------------------------------- Entrypoint
 
+def is_port_in_use(port, host="127.0.0.1"):
+    try:
+        import socket
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.3)
+            return s.connect_ex((host, port)) == 0
+    except Exception:
+        return False
+
 def parse_cli():
     host = os.environ.get("HOST", "127.0.0.1")
+    explicit_port = False
     port = int(os.environ.get("PORT", "5000"))
+    if "PORT" in os.environ:
+        explicit_port = True
     args = sys.argv[1:]
     for i, a in enumerate(args):
         if a == "--port" and i + 1 < len(args):
             port = int(args[i + 1])
+            explicit_port = True
         elif a.startswith("--port="):
             port = int(a.split("=", 1)[1])
+            explicit_port = True
         elif a == "--host" and i + 1 < len(args):
             host = args[i + 1]
         elif a.startswith("--host="):
             host = a.split("=", 1)[1]
+
+    if not explicit_port and is_port_in_use(port, host):
+        for candidate in range(port + 1, port + 10):
+            if not is_port_in_use(candidate, host):
+                print(f"[!] Port {port} is occupied by another process. Auto-selecting port {candidate}.")
+                port = candidate
+                break
+
     return host, port
 
 if __name__ == "__main__":

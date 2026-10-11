@@ -50,3 +50,6 @@ venv.bak/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Legacy nested duplicate folder
+Weather Application/
